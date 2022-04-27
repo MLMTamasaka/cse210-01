@@ -1,19 +1,20 @@
-# Import the needed libraries. 
-from random import *
-
 # Function for users choosing what their symbol will be.
-def user_symbol(players):
+def user_symbol():
 
     # Instructions for choosing user character.
-    print("Here you'll choose what symbol you'll be using, for the default\n"
-            "simply hit enter.")
+    print("\n----------------------------------------------------------------------")
+    print("\n\tHere you'll choose what symbol you'll be using, for the\n"
+            "\tdefault simply hit enter.\n")
 
     # Asking the user for what their mark will be.
     players = []
-    player_1 = input("Player 1, what will be your character (Default is 'X')? ")
-    player_2 = input("Player 2, what will be your character (Default is 'O')? ")
-    players.append(player_1)
-    players.append(player_2)
+
+    player_1 = input("\tPlayer 1, what will be your character (Default is 'X')? ")
+    player_2 = input("\tPlayer 2, what will be your character (Default is 'O')? ")
+    print("\n----------------------------------------------------------------------")
+    if player_1 != '' and player_2 != '':
+        players.append(player_1)
+        players.append(player_2)
 
     # Default choice for the user.
     if not players:
@@ -22,34 +23,96 @@ def user_symbol(players):
     return players
 
 # Defining the board.
-def board(board):
-    print(f"{board[0]} | {board[1]} | {board[2]}")
+def create_board(board):
+    print(f"\n{board[0]} | {board[1]} | {board[2]}")
     print("-+-+-+-+-")
     print(f"{board[3]} | {board[4]} | {board[5]}")
     print("-+-+-+-+-")
-    print(f"{board[6]} | {board[7]} | {board[8]}")
+    print(f"{board[6]} | {board[7]} | {board[8]}\n")
 
 # Defining the win conditions.
+def winner_winner_chicken_dinner(board_size):
+    if (board_size[0]==board_size[1]==board_size[2] or 
+        board_size[3]==board_size[4]==board_size[5] or
+        board_size[6]==board_size[7]==board_size[8] or
+        board_size[0]==board_size[3]==board_size[6] or 
+        board_size[1]==board_size[4]==board_size[7] or
+        board_size[2]==board_size[5]==board_size[8] or
+        board_size[0]==board_size[4]==board_size[8] or 
+        board_size[2]==board_size[4]==board_size[6]):
+        return True
+    else:
+        return False
 
-# Defining the draw condition.
+# Defining the draw condition. -- Source tictactoe-solution.py from Bro. Manley
+def is_it_a_tie(board_size,players):
+    for tile in range(9):
+        if board_size[tile] != players[0] and board_size[tile] != players[1]:
+            return False
+    return True
 
-# Defining the play again function.
+# Defining the player's move
+def player_move(user, board_size):
+    # Player one goes first.
+    move = int(input(f"'{user}'s turn, choose one of the squares (1-9): "))
+    board_size[move-1]=user
+
+# Defining play again function.
+def play_again():
+
+    # Asking for user input for playing again.
+    user_choice = ""
+    while user_choice not in ('yes','no'):
+        user_choice = input ("GG, play again(yes/no)? ").lower()
+        if user_choice not in ('yes','no'):
+            print("Please enter either 'yes' or 'no'.")
+
+    if user_choice == 'no':
+        print("Thanks for playing!\n\n")
+        return False
+    else:
+        return True
+
+# Defining the switching players function.
+def switch_player(players, player):
+    # Switching player.
+    if player == players[1]:
+        return players[0]
+    elif player == players[0]:
+        return players[1]
 
 # Starting the main function of the tic-tac-toe game.
 def main ():
 
+    # Variable used to keep the game running
+    still_running=True
+
     # Describing the game/how to play.
-    print("Welcome to the Tic-Tac-Toe game! Simply input the number\n"
-            "from the board when the corresponding player is asked.\n")
+    print("\n\nWelcome to the Tic-Tac-Toe game! Simply input the number\n"
+            "from the board when the corresponding player is asked.")
     
-    # Users choose what their symbol will be.
-    players=user_symbol(players)
+    # Starting main loop for the game.
+    while still_running:
+        # Users choose what their symbol will be.
+        players=user_symbol()
+        player=players[0]
 
-    # Functions for main loop.
-    board_size = [1,2,3,4,5,6,7,8,9]
-    board(board_size)
+        # List for the board.
+        board = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
-    # Asking if the user would like to play again.
+        # Starting the game portion.
+        while not (winner_winner_chicken_dinner(board) or is_it_a_tie(board,players)):
+
+            # Make the board.
+            create_board(board)
+            # Player's move.
+            player_move(player, board)
+            # Switching players.
+            player=switch_player(players,player)
+            
+        # Asking user if they want to play again.
+        create_board(board)
+        still_running=play_again()
 
 # Starting the main game.
 if __name__ == "__main__":
